@@ -1,94 +1,140 @@
 <template>
   <div class="container">
     <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.qGo0IrBjfJ9uFguGHfoM9wAAAA%26pid%3DApi&f=1&ipt=4168865cb3d14fda95ca7359b0ee1e90d7c3d4d572702fdd6dd0e8349fc252de&ipo=images" alt="immagine-fattoria">
+    
+    <!-- Mostra la lista delle fattorie -->
     <div v-if="farmShow" class="content">
       <h1 class="rotate" id="test-h1">Farms</h1>
       <div class="in-line">
-        <button @click="addFarm">test add farm and farmers</button>
-        <button @click="toggleNewfarmShow" class="in-line">add new farms</button>
+        <button @click="addFarm">Test add farm and farmers</button>
+        <button @click="toggleNewFarmShow" class="in-line">Add new farms</button>
       </div>
       <ul>
-        <li v-for="farms in farms" :key="farms.id" class="gradient-text">
-          {{ farms.name }} {{ farms.city }}
+        <li v-for="farm in farms" :key="farm.id" class="gradient-text">
+          [{{ farm.id }}] {{ farm.name }} {{ farm.city }}
+          <br />
+          <button @click="editFarm(farm.id)">Edit</button>
+          <button @click="deleteFarm(farm.id)">Delete</button>
         </li>
       </ul>
     </div>
         
-    <!-- elementi da mostare al click sul add new farms -->
-    <div v-else="farmShow" class="content">
+    <!-- Form per aggiungere una nuova fattoria -->
+    <div v-else-if="newFarmFormShow" class="content">
       <h1 class="rotate">ADD NEW FARM</h1>
-      <input type="text" v-model="newFarmData.name" placeholder="farm name">
-      <input type="text" v-model="newFarmData.city" placeholder="farm city">
+      <input type="text" v-model="newFarmData.name" placeholder="Farm name">
+      <input type="text" v-model="newFarmData.city" placeholder="Farm city">
       <div class="in-line">
-        <button @click="toggleNewfarmShow">cancell</button>
-        <button @click="saveNewFarm">save</button>
+        <button @click="toggleNewFarmShow">Cancel</button>
+        <button @click="saveNewFarm">Save</button>
+      </div>
+    </div>
+
+    <!-- Form per modificare una fattoria -->
+    <div v-else-if="updateFarmFormShow" class="content">
+      <h1 class="rotate">UPDATE FARM</h1>
+      <input type="text" v-model="updateFarmData.name" placeholder="Farm name">
+      <input type="text" v-model="updateFarmData.city" placeholder="Farm city">
+      <div class="in-line">
+        <button @click="toggleUpdateFarmShow">Cancel</button>
+        <button @click="updateFarm">Save</button>
       </div>
     </div>
   </div>
 </template>
 
-<!-- ----------------------------------------SCRIPT--------------------------------------------------- -->
-  
 <script setup>
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
 
+// Variabili di stato
 const farms = ref([])
 const farmShow = ref(true)
+const newFarmFormShow = ref(false)
+const updateFarmFormShow = ref(false)
 const newFarmData = ref({
-  "name": '',
-  "city": ''
+  name: '',
+  city: ''
 })
+const updateFarmData = ref({})
 
-// EVENTI
-
-const addFarm = () => {
-  axios.get("http://localhost:8080/api/v1/farmers/test/add").then(updateData)
-}
-
+// Funzione per aggiornare la lista delle fattorie
 const updateData = () => {
   axios
-  .get('http://localhost:8080/api/v1/farms')
-  .then((res) => {
-    farms.value = res.data
-  })
-  .catch(() => {
-    console.log('error!!!!!!!!!')
-  })
-}
-
-onMounted(() => {
-  axios.get('http://localhost:8080/api/v1/farms')
+    .get('http://localhost:8080/api/v1/farms')
     .then((res) => {
       farms.value = res.data
     })
     .catch((err) => {
-      console.error('error!!!!!!!!!', err)
+      console.error('Error fetching data:', err)
     })
-})
+}
 
-const toggleNewfarmShow = () => {
+// Funzione per aggiungere dati di test
+const addFarm = () => {
+  axios.get('http://localhost:8080/api/v1/farmers/test/add').then(updateData).catch((err) => console.error('Error adding test data:', err))
+}
+
+// Funzione per salvare una nuova fattoria
+const saveNewFarm = () => {
+  axios.post('http://localhost:8080/api/v1/farms', newFarmData.value).then((res) => {
+    const savedFarm = res.data
+    farms.value.push(savedFarm)
+    newFarmData.value = { name: '', city: '' }
+    toggleNewFarmShow()
+  }).catch((err) => {
+    console.error('Error saving new farm:', err)
+  })
+}
+
+// Funzione per modificare una fattoria
+const editFarm = (id) => {
+  const farm = farms.value.find(farm => farm.id === id)
+  if (farm) {
+    updateFarmData.value = { ...farm }
+    farmShow.value = false
+    updateFarmFormShow.value = true
+  }
+}
+
+// Funzione per aggiornare una fattoria
+const updateFarm = () => {
+  axios.patch(`http://localhost:8080/api/v1/farms/${updateFarmData.value.id}`, updateFarmData.value).then(() => {
+    updateData()
+    toggleUpdateFarmShow()
+  }).catch((err) => {
+    console.error('Error updating farm:', err)
+  })
+}
+
+// Funzione per cancellare una fattoria
+const deleteFarm = (id) => {
+  axios.delete(`http://localhost:8080/api/v1/farms/${id}`).then(() => {
+    farms.value = farms.value.filter(farm => farm.id !== id)
+  }).catch((err) => {
+    console.error('Error deleting farm:', err)
+  })
+}
+
+// Funzioni per mostrare/nascondere i form
+const toggleNewFarmShow = () => {
+  newFarmFormShow.value = !newFarmFormShow.value
   farmShow.value = !farmShow.value
 }
 
-const saveNewFarm = () => {
-  axios.post('http://localhost:8080/api/v1/farms', newFarmData.value).then((res) => {
-    const savedFarm = res.data;
-
-    farms.value.push(savedFarm)
-    newFarmData.value = {
-      name: '',
-      city: ''
-    }
-
-    toggleNewfarmShow()
-  })
+const toggleUpdateFarmShow = () => {
+  updateFarmFormShow.value = !updateFarmFormShow.value
+  farmShow.value = !farmShow.value
 }
+
+// Caricare i dati all'avvio
+onMounted(() => {
+  updateData()
+})
 </script>
 
-<!-- ------------------------------------------STILE--------------------------------------------------- -->
-  
 <style>
+/* Aggiungi il tuo stile qui */
 body {
   background-color: lightgreen;
   margin: 0;
