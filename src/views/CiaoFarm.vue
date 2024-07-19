@@ -9,14 +9,14 @@
         <button @click="addFarm">Test add farm and farmers</button>
         <button @click="toggleNewFarmShow" class="in-line">Add new farms</button>
       </div>
-      <ul>
+      <ol>
         <li v-for="farm in farms" :key="farm.id" class="gradient-text">
-          [{{ farm.id }}] {{ farm.name }} {{ farm.city }}
+          {{ farm.name }} {{ farm.city }}
           <br />
           <button @click="editFarm(farm.id)">Edit</button>
           <button @click="deleteFarm(farm.id)">Delete</button>
         </li>
-      </ul>
+      </ol>
     </div>
         
     <!-- Form per aggiungere una nuova fattoria -->
@@ -44,48 +44,74 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
-import axios from 'axios'
+import { onMounted, ref } from 'vue';
+import axios from 'axios';
 
-// Variabili di stato
-const farms = ref([])
-const farmShow = ref(true)
-const newFarmFormShow = ref(false)
-const updateFarmFormShow = ref(false)
+const farms = ref([]);
+const farmShow = ref(true);
 const newFarmData = ref({
   name: '',
   city: ''
-})
-const updateFarmData = ref({})
+});
 
 // Funzione per aggiornare la lista delle fattorie
 const updateData = () => {
+  console.log('Fetching data...');
   axios
     .get('http://localhost:8080/api/v1/farms')
     .then((res) => {
-      farms.value = res.data
+      console.log('Data fetched successfully:', res.data);
+      if (Array.isArray(res.data)) {
+        farms.value = res.data;
+      } else {
+        console.error('Expected an array but got:', res.data);
+      }
     })
     .catch((err) => {
-      console.error('Error fetching data:', err)
-    })
+      console.error('Error fetching data:', err);
+    });
 }
 
 // Funzione per aggiungere dati di test
 const addFarm = () => {
-  axios.get('http://localhost:8080/api/v1/farmers/test/add').then(updateData).catch((err) => console.error('Error adding test data:', err))
+  axios.get('http://localhost:8080/api/v1/farmers/test/add')
+    .then((res) => {
+      console.log('Test data added successfully:', res.data);
+      updateData();
+    })
+    .catch((err) => {
+      console.error('Error adding test data:', err.response ? err.response.data : err.message);
+    });
+}
+
+// Funzione per mostrare o nascondere il form per una nuova fattoria
+const toggleNewfarmShow = () => {
+  farmShow.value = !farmShow.value;
 }
 
 // Funzione per salvare una nuova fattoria
 const saveNewFarm = () => {
-  axios.post('http://localhost:8080/api/v1/farms', newFarmData.value).then((res) => {
-    const savedFarm = res.data
-    farms.value.push(savedFarm)
-    newFarmData.value = { name: '', city: '' }
-    toggleNewFarmShow()
-  }).catch((err) => {
-    console.error('Error saving new farm:', err)
-  })
+  console.log('Saving new farm...', newFarmData.value);
+  axios.post('http://localhost:8080/api/v1/farms', newFarmData.value)
+    .then((res) => {
+      const savedFarm = res.data;
+      console.log('New farm saved successfully:', savedFarm);
+      farms.value.push(savedFarm);
+      newFarmData.value = {
+        name: '',
+        city: ''
+      };
+      toggleNewfarmShow();
+    })
+    .catch((err) => {
+      console.error('Error saving new farm:', err);
+    });
 }
+
+onMounted(() => {
+  console.log('Component mounted, fetching initial data...');
+  updateData();
+});
 
 // Funzione per modificare una fattoria
 const editFarm = (id) => {
@@ -136,20 +162,24 @@ onMounted(() => {
 <style>
 /* Aggiungi il tuo stile qui */
 body {
-  background-color: lightgreen;
+  background-color: black;
   margin: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
 }
 
 .container {  
-  width: 80vw;
-  margin-left: auto;
-  margin-right: auto;
+  width: 60vw;
   text-align: center;
+  background-color: lightgreen;
+  min-height: 100vh;
+  position: absolute;
+  top: 0;
+  right: 22vw;
+
+
 }
 
 img {
@@ -193,7 +223,7 @@ input {
   background-color: white;
 }
 
-ul {
+ol {
   padding: 0;
   margin: 0;
   list-style: none;
