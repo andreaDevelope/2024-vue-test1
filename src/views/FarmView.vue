@@ -7,14 +7,13 @@
             <button @click="toggleNewFarmShow">add new farm</button>
             <ol>
                 <li v-for="farm in farms" :key="farm.id">
-                    {{ farm.name }}: {{ farm.city }}
+                  <div class="li-separetor"><span>NAME: </span>{{ farm.name }}</div> <div class="li-separetor"><span>CITY: </span>{{ farm.city }}</div> 
                 </li>
 
             </ol>
         </div>
 
         <!-- cambio schermo legato al bottone new farm -->
-
         <div v-if="newFarmShow" class="swhitch"><!-- v-if 1 -->
             <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.qGo0IrBjfJ9uFguGHfoM9wAAAA%26pid%3DApi&f=1&ipt=4168865cb3d14fda95ca7359b0ee1e90d7c3d4d572702fdd6dd0e8349fc252de&ipo=images" alt="immagine-fattoria">
             <h1>New Farm</h1>
@@ -89,6 +88,10 @@ const saveNewFarm = ()=>{
     })
 }
 
+onMounted(() => {
+  updateData()
+})
+
 </script>
 <!-- ---------------------------------STYLE---------------------------------- -->
 <style>
@@ -139,7 +142,15 @@ const saveNewFarm = ()=>{
     ol{
         position: relative;
         width: 28vw;
+    }
 
+    .li-separetor{
+        display: inline-block;
+        width: 13vw;
+    }
+
+    span{
+        color: red;
     }
 
     li{
@@ -155,6 +166,4 @@ const saveNewFarm = ()=>{
         text-align: center;
         margin: 5px;
     }
-
-
 </style>
