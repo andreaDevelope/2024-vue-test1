@@ -1,0 +1,3 @@
+<template>
+    <h1>Farmer</h1>
+</template>
