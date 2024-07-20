@@ -31,8 +31,8 @@
          <div v-if="updateFarmShow" class="swhitch">
             <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse2.mm.bing.net%2Fth%3Fid%3DOIP.qGo0IrBjfJ9uFguGHfoM9wAAAA%26pid%3DApi&f=1&ipt=4168865cb3d14fda95ca7359b0ee1e90d7c3d4d572702fdd6dd0e8349fc252de&ipo=images" alt="immagine-fattoria">
             <h1>Update Farm</h1>
-            <input v-model="newFarmData.name" type="text" placeholder="new name">
-            <input v-model="newFarmData.city" type="text" placeholder="new city">
+            <input v-model="updateFarmData.name" type="text" placeholder="new name">
+            <input v-model="updateFarmData.city" type="text" placeholder="new city">
             <button @click="toggleUpdateFarmShow">cancel</button>
             <button @click="updateFarm">save</button>
 
