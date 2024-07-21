@@ -13,6 +13,12 @@
                 </li>
 
             </ol>
+
+            <!-- ------------------------------------link cambio pagina---------------------------------- -->
+            <div>
+                <p>torna a farmer</p>
+                <a href="http://localhost:5173/"><button>farmer</button></a>
+            </div>
         </div>
 
         <!-- cambio schermo legato al bottone new farm -->
@@ -35,8 +41,9 @@
             <input v-model="updateFarmData.city" type="text" placeholder="new city">
             <button @click="toggleUpdateFarmShow">cancel</button>
             <button @click="updateFarm">save</button>
-
          </div>
+
+
     </div>
 </template>
 
@@ -160,7 +167,7 @@ onMounted(() => {
 
     body{
         width: 100vw;
-        overflow: hidden;
+        overflow-x: hidden;
         background-color: black;
     }
 
@@ -177,7 +184,7 @@ onMounted(() => {
         text-align: center;
         background-color: lightgreen;
         padding: 30px;
-        height: 100vh;
+        min-height: 100vh;
         position: absolute;
         top: 0;
         border-radius: 16px;
@@ -206,6 +213,11 @@ onMounted(() => {
         width: 13vw;
     }
 
+    .li-separetor2{
+        display: inline-block;
+        width: 15vw;
+    }
+
     span{
         color: red;
     }
@@ -222,5 +234,10 @@ onMounted(() => {
         padding: 2px;
         text-align: center;
         margin: 5px;
+    }
+
+    p{
+        margin-top: 80px;
+        font-size: 12px;
     }
 </style>
