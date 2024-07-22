@@ -10,7 +10,12 @@
             <button @click="toggleNewFarmerShow">add new farmer</button>
             <ol>
             <li v-for="farmer in farmers" :key="farmer.id">
-                <div class="li-separetor2"><span>NAME: </span>{{ farmer.name }}</div> <div class="li-separetor2"><span>SURNAME: </span>{{ farmer.surname }}</div> <div class="li-separetor2"><span>AGE: </span>{{ farmer.age }}</div>
+                <div class="li-separetor2"><span>NAME: </span>{{ farmer.name }}</div> 
+                <div class="li-separetor2"><span>SURNAME: </span>{{ farmer.surname }}</div> 
+                <div class="li-separetor2"><span>AGE: </span>{{ farmer.age }}</div>
+                <div class="li-separetor2"><span>FARM NAME: </span>{{farmer.farm.name }}</div>
+                <div class="li-separetor2"><span>FARM CITY: </span>{{farmer.farm.city }}</div>
+
                 <div class="li-separetor2">
                     <button @click="editFarmer(farmer.id)">EDIT</button>
                     <button @click="deleteFarmer(farmer.id)">DELETE</button>
@@ -99,8 +104,10 @@
       .get('http://localhost:8080/api/v1/farmers')
       .then((response) => {
         farmers.value = response.data
+        console.log(response.data)
+
       })
-  
+      
     axios
     .get('http://localhost:8080/api/v1/farms')
     .then((response) => {
@@ -182,6 +189,7 @@
         console.log('Error: ' + err)
       })
   }
+  
   
   onMounted(updateData)
 </script>
