@@ -15,6 +15,12 @@
                 <div class="li-separetor2"><span>AGE: </span>{{ farmer.age }}</div>
                 <div class="li-separetor2"><span>FARM NAME: </span>{{farmer.farm.name }}</div>
                 <div class="li-separetor2"><span>FARM CITY: </span>{{farmer.farm.city }}</div>
+                <div class="li-separetor2"><span>Specializations:</span></div>
+                <ol>
+                  <li class="spec" v-for="spec in farmer.specializations" :key="spec.id">
+                  {{ spec.name }}
+                  </li>
+                </ol>
 
                 <div class="li-separetor2">
                     <button @click="editFarmer(farmer.id)">EDIT</button>
@@ -45,6 +51,17 @@
                     {{ farm.name }} ({{ farm.city }})
                 </option>
             </select> 
+            <div class="li-separetor"><span>Specializations:</span></div>
+            <br />
+            <div v-for="spec in specs" :key="spec.id">
+              <input
+                type="checkbox"
+                :id="'spec-' + spec.id"
+                :value="spec.id"
+                v-model="newFarmerData.specs"
+              />
+              <label :for="'spec-' + spec.id">{{ spec.name }}</label>
+            </div>
             <div>
                 <button @click="toggleNewFarmerShow">cancel</button>
                 <button @click="saveNewFarmer">save</button>
@@ -85,12 +102,14 @@
   
   const farms = ref([])
   const farmers = ref([])
+  const specs = ref([])
   
   const newFarmerData = ref({
     name: '',
     surname: '',
     age: 0,
     farmId: 0,
+    specs: []
   })
   const updateFarmerData = ref({})
   
@@ -114,6 +133,11 @@
       console.log(response.data)
       farms.value = response.data
     })
+
+    axios.get('http://localhost:8080/api/v1/specs').then((res) => {
+    specs.value = res.data
+    })
+
   }
   
   // FUNCTION

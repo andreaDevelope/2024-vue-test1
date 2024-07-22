@@ -188,6 +188,14 @@ onMounted(() => {
         position: absolute;
         top: 0;
         border-radius: 16px;
+        max-width: 60vw;
+    }
+
+    .spec{
+        background-color: gold;
+        width: 60%;
+        position: relative;
+        left: 5vw;
     }
 
     img{
@@ -216,6 +224,11 @@ onMounted(() => {
     .li-separetor2{
         display: inline-block;
         width: 15vw;
+    }
+
+    .li-separetor3{
+        display: inline-block;
+        width: 25vw;
     }
 
     span{
